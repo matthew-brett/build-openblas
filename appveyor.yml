@@ -31,6 +31,8 @@ build_script:
   - pacman -Rs --noconfirm gcc gcc-fortran
   - pacman -Q
   - echo %CC%
+  - echo int main(int argc, char **argv) { exit(0); } > test.c
+  - gcc -o foo test.c
   - gcc -o foo getarch.c
   - make BINARY=%ARCH% DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0
     NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1
