@@ -12,8 +12,10 @@ environment:
 
 build_script:
   - cmd: git submodule update --init --recursive
-  - cmd /c install_mingwpy.bat
   - set PATH=C:\msys64\usr\bin;%PATH%
+  - pacman -Sy --noconfirm p7zip
+  - curl -L "%MINGWPY_URL%/%GCC_FNAME%" -o gcc.7z
+  - bash -c "7z x gcc.7z"
   - set PATH=%cd%\%GCC_ROOT%\bin;%PATH%
   - gcc -v
   # Try compiling a test file
