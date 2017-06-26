@@ -21,3 +21,5 @@ build_script:
   # Try compiling a test file
   - echo int main(int argc, char **argv) { exit(0); } > test.c
   - gcc -o foo test.c
+  - cd OpenBLAS
+  - gcc -o foo getarch.c
