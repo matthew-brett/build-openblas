@@ -6,17 +6,19 @@ environment:
       MINGWPY_URL: https://8f55531b0432ac914da3-7f407ad05f03da00978ba0b8ec6c202f.ssl.cf2.rackcdn.com
 
     matrix:
-      - ARCH: 64
-        GCC_FNAME: x86_64-5.3.0-static-release-win32-seh-rt_v4-rev20160317.7z
-        GCC_ROOT: mingw64
+      - PYTHON: "C:\\Python27"
+        PYTHON_VERSION: "2.7.8"
+        PYTHON_ARCH: "32"
+
+      - PYTHON: "C:\\Python27-x64"
+        PYTHON_VERSION: "2.7.8"
+        PYTHON_ARCH: "64"
 
 build_script:
   - cmd: git submodule update --init --recursive
   - set PATH=C:\msys64\usr\bin;%PATH%
-  - pacman -Sy --noconfirm p7zip
-  - curl -L "%MINGWPY_URL%/%GCC_FNAME%" -o gcc.7z
-  - bash -c "7z x gcc.7z"
-  - set PATH=%cd%\%GCC_ROOT%\bin;%PATH%
+  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
+  - where gcc
   - gcc -v
   # Try compiling a test file
   - echo int main(int argc, char **argv) { exit(0); } > test.c
