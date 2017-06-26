@@ -19,9 +19,9 @@ build_script:
   - pacman -Rs --noconfirm gcc gcc-fortran
   # Install mingwpy gcc
   - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
-  - where gcc
   # Delete specs file to link to MSVCRT
-  - bash -c "echo rm $(dirname $(gcc --print-file specs))"
+  - bash -c "rm $(gcc --print-file specs)"
+  - gcc -dumpspecs
   - cd OpenBLAS
   - set LIBNAME_SUFFIX=mingwpy
   - make BINARY=%PYTHON_ARCH% DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0
