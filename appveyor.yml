@@ -14,8 +14,12 @@ environment:
 
 build_script:
   - git submodule update --init --recursive
-  - set PATH=%PATH%;C:\msys64\usr\bin
+  - set PATH=C:\msys64\usr\bin;%PATH%
+  # Remove msys gcc
+  - pacman -Rs --noconfirm gcc gcc-fortran
+  # Install mingwpy gcc
   - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
+  - where gcc
   # Delete specs file to link to MSVCRT
   - bash -c "echo rm $(dirname $(gcc --print-file specs))"
   - cd OpenBLAS
