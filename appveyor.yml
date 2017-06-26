@@ -7,22 +7,25 @@ environment:
 
     matrix:
       - PYTHON: "C:\\Python27"
-        PYTHON_VERSION: "2.7.8"
         PYTHON_ARCH: "32"
 
       - PYTHON: "C:\\Python27-x64"
-        PYTHON_VERSION: "2.7.8"
         PYTHON_ARCH: "64"
 
 build_script:
-  - cmd: git submodule update --init --recursive
-  - set PATH=C:\msys64\usr\bin;%PATH%
+  - git submodule update --init --recursive
+  - set PATH=%PATH%;C:\msys64\usr\bin
   - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
-  - where gcc
-  - gcc -v
-  # Try compiling a test file
-  - echo int main(int argc, char **argv) { exit(0); } > test.c
-  - gcc test.c
+  # Delete specs file to link to MSVCRT
+  - bash -c "echo rm $(dirname $(gcc --print-file specs))"
   - cd OpenBLAS
-  # Try compiling a test file again
-  - gcc ..\test.c
+  - set LIBNAME_SUFFIX=mingwpy
+  - make BINARY=%PYTHON_ARCH% DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0
+    NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1
+    BUILD_LAPACK_DEPRECATED=1 MAX_STACK_ALLOC=2048
+  - make PREFIX=c:\opt\%PYTHON_ARCH% install
+  - cd c:\opt
+  - tar zcvf openblas_%PYTHON_ARCH%.tar.gz %PYTHON_ARCH%
+
+artifacts:
+    - path: c:\opt\*.tar.gz
