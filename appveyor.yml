@@ -20,6 +20,7 @@ build_script:
   - gcc -v
   # Try compiling a test file
   - echo int main(int argc, char **argv) { exit(0); } > test.c
-  - gcc -o foo test.c
+  - gcc test.c
   - cd OpenBLAS
-  - gcc -o foo getarch.c
+  # Try compiling a test file again
+  - gcc ..\test.c
