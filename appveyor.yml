@@ -15,7 +15,10 @@ environment:
 build_script:
   - git submodule update --init --recursive
   - set PATH=C:\msys64\usr\bin;%PATH%
-  - pacman -S --noconfirm p7zip
+  - pacman -Sy --noconfirm p7zip
+  # Debug
+  - pacman -Sy --noconfirm git svn zip tar autoconf make libtool automake
+    p7zip patch bison gettext-devel wget sshpass texinfo
   - curl -L "%MINGWPY_URL%/%GCC_FNAME%" -o gcc.7z
   - bash -c "7z x gcc.7z"
   - SET PATH=%cd%\%GCC_ROOT%\bin;%PATH%
