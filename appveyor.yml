@@ -18,7 +18,8 @@ build_script:
   - pacman -Sy --noconfirm p7zip
   - curl -L "%MINGWPY_URL%/%GCC_FNAME%" -o gcc.7z
   - bash -c "7z x gcc.7z"
-  - SET PATH=%cd%\%GCC_ROOT%\bin;%PATH%
+  - set PATH=%cd%\%GCC_ROOT%\bin;%PATH%
+  - set CC=%cd%\%GCC_ROOT%\bin\gcc
   - dir
   - gcc -dumpspecs
   - cd OpenBLAS
@@ -26,8 +27,7 @@ build_script:
   - where gcc
   - where make
   - gcc -v
-  - echo BINARY=%ARCH%
-  - set CC=gcc
+  - echo BINARY=%ARCH% CC=%CC%
   - make BINARY=%ARCH% DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0
     NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1
     BUILD_LAPACK_DEPRECATED=1 MAX_STACK_ALLOC=2048
