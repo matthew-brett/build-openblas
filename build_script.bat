@@ -14,7 +14,7 @@ call venv\Scripts\activate.bat
 REM Get Python bitness
 REM https://stackoverflow.com/questions/1746475/windows-batch-help-in-setting-a-variable-from-command-output#4509885
 set PY_CMD=python -c "import platform; print(platform.architecture()[0][:2])"
-for /f "tokens=1 delims=" %i in ('%PY_CMD%') do set PYTHON_ARCH=%i
+for /f "tokens=1 delims=" %%i in ('%PY_CMD%') do set PYTHON_ARCH=%%i
 REM Install mingwpy gcc
 pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
 REM Patch specs file
