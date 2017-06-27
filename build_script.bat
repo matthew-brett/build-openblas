@@ -17,29 +17,17 @@ set PY_CMD=python -c "import platform; print(platform.architecture()[0][:2])"
 for /f "tokens=1 delims=" %i in ('%PY_CMD%') do set PYTHON_ARCH=%i
 REM Install mingwpy gcc
 pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
-REM Delete specs file to link to MSVCRT
-bash -c "rm $(gcc --print-file specs)"
+REM Patch specs file
+bash patch_specs.sh
 gcc -dumpspecs
 cd OpenBLAS
 git checkout %BUILD_COMMIT%
 git clean -fxd
 git reset --hard
 set LIBNAMESUFFIX=%BUILD_COMMIT%_mingwpy
-if [%PYTHON_ARCH%] EQU [64] (
-    set march=x86-64
-    set extra= 
-) ELSE (
-    set march=pentium4
-    set extra=-mfpmath=sse -msse2
-)
-set cflags=-O2 -march=%march% -mtune=generic %extra%
-set fflags=%cflags% -frecursive -ffpe-summary=invalid,zero
 make BINARY=%PYTHON_ARCH% DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 ^
      NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1 ^
-     BUILD_LAPACK_DEPRECATED=1 ^
-     COMMON_OPT="%cflags%" ^
-     FCOMMON_OPT="%fflags%" ^
-     MAX_STACK_ALLOC=2048
+     BUILD_LAPACK_DEPRECATED=1 MAX_STACK_ALLOC=2048
 make PREFIX=%BUILD_ROOT%\%PYTHON_ARCH% install
 cd %BUILD_ROOT%
 REM Copy library link file for custom name
@@ -54,6 +42,6 @@ echo libraries = %DLL_BASENAME%
 echo library_dirs = {openblas_root}\%PYTHON_ARCH%\lib
 echo include_dirs = {openblas_root}\%PYTHON_ARCH%\include
 ) > %PYTHON_ARCH%\site.cfg.template
-tar zcvf openblas_%BUILD_COMMIT%_%PYTHON_ARCH%.tar.gz %PYTHON_ARCH%
+tar zcvf openblas_%PYTHON_ARCH%.tar.gz %PYTHON_ARCH%
 cd %OUR_WD%
 call deactivate

@@ -1,0 +1,21 @@
+--- specs.old	2017-06-27 19:31:35.000000000 +0100
++++ specs	2017-06-27 19:31:34.000000000 +0100
+@@ -49,9 +49,6 @@
+ *cc1plus:
+ -mlong-double-64 -DMS_WIN64 -D__MSVCRT_VERSION__=0x0900  %(local_includes)
+ 
+-*link_gcc_c_sequence:
+-%G %L %G %{shared|mdll: msvcr90.dll.res%s} %{!shared: %{!mdll: msvcr90.exe.res%s}}
+-
+ *link_ssp:
+ %{fstack-protector|fstack-protector-strong|fstack-protector-all:-lssp_nonshared -lssp}
+ 
+@@ -68,7 +65,7 @@
+ 
+ 
+ *libgcc:
+-%{mthreads:-lmingwthrd} -lmingw32     -lgcc     -lmoldname -lmingwex -lmsvcr90
++%{mthreads:-lmingwthrd} -lmingw32     -lgcc     -lmoldname -lmingwex -lmsvcrt
+ 
+ *startfile:
+ %{shared|mdll:dllcrt2%O%s}   %{!shared:%{!mdll:%{!municode:crt2%O%s}}}   %{!shared:%{!mdll:%{municode:crt2u%O%s}}}   %{pg:gcrt2%O%s}   crtbegin.o%s
