@@ -42,6 +42,8 @@ echo libraries = %DLL_BASENAME%
 echo library_dirs = {openblas_root}\%PYTHON_ARCH%\lib
 echo include_dirs = {openblas_root}\%PYTHON_ARCH%\include
 ) > %PYTHON_ARCH%\site.cfg.template
-tar zcvf openblas_%PYTHON_ARCH%.tar.gz %PYTHON_ARCH%
+set TAR_NAME=openblas_%BUILD_COMMIT%_%PYTHON_ARCH%.tar.gz
+tar zcvf %TAR_NAME% %PYTHON_ARCH%
+copy %TAR_NAME% %OUR_WD%
 cd %OUR_WD%
 call deactivate

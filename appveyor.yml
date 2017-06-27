@@ -15,4 +15,4 @@ build_script:
     - build_script.bat
 
 artifacts:
-    - path: %BUILD_ROOT%\*.tar.gz
+    - path: openblas_*.*
