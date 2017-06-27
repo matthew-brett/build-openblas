@@ -2,17 +2,30 @@
 # CI on Windows via appveyor
 
 environment:
-    global:
-      MSYS2_ROOT: c:\msys64
-      BUILD_COMMIT: v0.2.19
-      BUILD_ROOT: c:\opt
+  global:
+    MSYS2_ROOT: c:\msys64
+    BUILD_COMMIT: v0.2.19
+    BUILD_ROOT: c:\opt
+    WHEELHOUSE_UPLOADER_USERNAME: travis-worker
+    WHEELHOUSE_UPLOADER_SECRET:
+      secure: 9s0gdDGnNnTt7hvyNpn0/ZzOMGPdwPp2SewFTfGzYk7uI+rdAN9rFq2D1gAP4NQh
 
-    matrix:
-      - PYTHON: "C:\\Python27"
-      - PYTHON: "C:\\Python27-x64"
+  matrix:
+    - PYTHON: "C:\\Python27"
+    - PYTHON: "C:\\Python27-x64"
 
 build_script:
     - build_script.bat
 
 artifacts:
     - path: openblas_*.*
+
+on_success:
+  # Upload the generated package to Rackspace
+  # On Windows, Apache Libcloud cannot find a standard CA cert bundle so we
+  # disable the ssl checks.
+  - pip install wheelhouse-uploader
+  - python -m wheelhouse_uploader upload
+    --no-ssl-check --local-folder=dist
+    --no-update-index
+    wheels
