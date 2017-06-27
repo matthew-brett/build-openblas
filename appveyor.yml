@@ -21,8 +21,10 @@ build_script:
   # Try compiling a test file
   - echo int main(int argc, char **argv) { exit(0); } > test.c
   - gcc test.c
-  - cd OpenBLAS
-  # Try compiling a test file again
-  - gcc ../test.c
   - bash -c "type gcc.exe"
   - bash -c "gcc.exe ../test.c" ../test.c
+  - cd OpenBLAS
+  - bash -c "type gcc.exe"
+  - bash -c "gcc.exe ../test.c" ../test.c
+  # Try compiling a test file again
+  - gcc ../test.c
