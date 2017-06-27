@@ -25,6 +25,6 @@ build_script:
   - bash -c "gcc.exe ../test.c" ../test.c
   - cd OpenBLAS
   - bash -c "type gcc.exe"
-  - bash -c "gcc.exe ../test.c" ../test.c
+  - bash -c "gcc.exe ../test.c"
   # Try compiling a test file again
   - gcc ../test.c
