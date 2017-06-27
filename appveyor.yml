@@ -4,6 +4,9 @@
 environment:
     global:
       MINGWPY_URL: https://8f55531b0432ac914da3-7f407ad05f03da00978ba0b8ec6c202f.ssl.cf2.rackcdn.com
+      MSYS2_ROOT: c:\msys64
+      BUILD_COMMIT: v0.2.19
+      BUILD_ROOT: c:\opt
 
     matrix:
       - PYTHON: "C:\\Python27"
@@ -14,22 +17,28 @@ environment:
 
 build_script:
   - git submodule update --init --recursive
-  - set PATH=C:\msys64\usr\bin;%PATH%
-  # Remove msys gcc
-  - pacman -Rs --noconfirm gcc gcc-fortran
+  # We need at least the build tools, tar
+  - set PATH=%MSYS2_ROOT%\usr\bin;%PATH%
+  # Work in virtualenv
+  - pip install --upgrade virtualenv
+  - virtualenv venv
+  - venv\Scripts\activate.bat
   # Install mingwpy gcc
   - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
   # Delete specs file to link to MSVCRT
   - bash -c "rm $(gcc --print-file specs)"
   - gcc -dumpspecs
   - cd OpenBLAS
-  - set LIBNAME_SUFFIX=mingwpy
+  - git checkout %BUILD_COMMIT%
+  - git clean -fxd
+  - git reset --hard
+  - set LIBNAME_SUFFIX=%BUILD_COMMIT%_mingwpy
   - make BINARY=%PYTHON_ARCH% DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0
     NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1
     BUILD_LAPACK_DEPRECATED=1 MAX_STACK_ALLOC=2048
-  - make PREFIX=c:\opt\%PYTHON_ARCH% install
-  - cd c:\opt
+  - make PREFIX=%BUILD_ROOT%\%PYTHON_ARCH% install
+  - cd %BUILD_ROOT%
   - tar zcvf openblas_%PYTHON_ARCH%.tar.gz %PYTHON_ARCH%
 
 artifacts:
-    - path: c:\opt\*.tar.gz
+    - path: %BUILD_ROOT%\*.tar.gz
