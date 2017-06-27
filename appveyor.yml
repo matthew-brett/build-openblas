@@ -22,7 +22,7 @@ build_script:
   - echo int main(int argc, char **argv) { exit(0); } > test.c
   - gcc test.c
   - bash -c "type gcc.exe"
-  - bash -c "gcc.exe ../test.c" ../test.c
+  - bash -c "gcc.exe test.c"
   - cd OpenBLAS
   - bash -c "type gcc.exe"
   - bash -c "gcc.exe ../test.c"
