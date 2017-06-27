@@ -9,6 +9,7 @@ set OUR_WD=%cd%
 REM Work in virtualenv
 pip install --upgrade virtualenv
 rmdir venv /s /q
+rmdir /s /q builds
 virtualenv venv
 call venv\Scripts\activate.bat
 REM Get Python bitness
@@ -43,8 +44,8 @@ echo libraries = %DLL_BASENAME%
 echo library_dirs = {openblas_root}\%PYTHON_ARCH%\lib
 echo include_dirs = {openblas_root}\%PYTHON_ARCH%\include
 ) > %PYTHON_ARCH%\site.cfg.template
-set TAR_NAME=openblas_%BUILD_COMMIT%_%PYTHON_ARCH%.tar.gz
+set TAR_NAME=openblas-%BUILD_COMMIT%_win%PYTHON_ARCH%.tar.gz
 tar zcvf %TAR_NAME% %PYTHON_ARCH%
-copy %TAR_NAME% %OUR_WD%
+copy %TAR_NAME% %OUR_WD%\builds
 cd %OUR_WD%
 call deactivate
