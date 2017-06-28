@@ -6,10 +6,12 @@ git submodule update --init --recursive
 REM We need at least the build tools, tar
 set PATH=%MSYS2_ROOT%\usr\bin;%PATH%
 set OUR_WD=%cd%
+REM Make output directory for build artifacts
+rmdir /s /q builds
+mkdir builds
 REM Work in virtualenv
 pip install --upgrade virtualenv
 rmdir venv /s /q
-rmdir /s /q builds
 virtualenv venv
 call venv\Scripts\activate.bat
 REM Get Python bitness
