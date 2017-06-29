@@ -12,9 +12,8 @@ environment:
 
 build_script:
   - cmd: git submodule update --init --recursive
-  - PATH
-  - set PATH=C:\msys64\usr\bin;%PATH%
-  - pacman -Sy --noconfirm p7zip
+  - PATH=c:\msys64\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0
+  - pacman -Sy --noconfirm p7zip git
   - curl -L "%MINGWPY_URL%/%GCC_FNAME%" -o gcc.7z
   - bash -c "7z x gcc.7z"
   - set GCC_DIR=%cd%\%GCC_ROOT%
