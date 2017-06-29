@@ -34,11 +34,11 @@ else
 fi
 cflags="-O2 -march=$march -mtune=generic $extra"
 fflags="$cflags -frecursive -ffpe-summary=invalid,zero"
-make BINARY=$PYTHON_BITS DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
+echo BINARY=$PYTHON_BITS DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
      NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1 \
      BUILD_LAPACK_DEPRECATED=1 \
-     COMMON_OPT=\"$cflags\" \
-     FCOMMON_OPT=\"$fflags\" \
+     COMMON_OPT="$cflags" \
+     FCOMMON_OPT="$fflags" \
      MAX_STACK_ALLOC=2048
 make PREFIX=$BUILD_ROOT/$PYTHON_BITS install
 cd $BUILD_ROOT
