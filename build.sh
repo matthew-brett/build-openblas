@@ -1,5 +1,9 @@
 #!/bin/bash
 # Build script for OpenBLAS on Windows
+# Expects environment variables:
+#  BUILD_ROOT
+#  BUILD_COMMIT
+
 # Minimum utilities
 pacman -Sy --noconfirm git
 pacman -Rs --noconfirm gcc gcc-fortran
@@ -54,6 +58,6 @@ libraries = $DLL_BASENAME
 library_dirs = {openblas_root}\\${PYTHON_BITS}\\lib
 include_dirs = {openblas_root}\\${PYTHON_BITS}\\include
 EOF
-TAR_NAME="openblas-$BUILD_COMMIT_win$PYTHON_BITS.tar.gz"
+TAR_NAME="openblas-${BUILD_COMMIT}_win${PYTHON_BITS}.tar.gz"
 tar zcvf $TAR_NAME $PYTHON_BITS
 cp $TAR_NAME $our_wd/builds
