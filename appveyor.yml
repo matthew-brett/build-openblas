@@ -12,11 +12,14 @@ environment:
 
 build_script:
   - cmd: git submodule update --init --recursive
+  - PATH
   - set PATH=C:\msys64\usr\bin;%PATH%
   - pacman -Sy --noconfirm p7zip
   - curl -L "%MINGWPY_URL%/%GCC_FNAME%" -o gcc.7z
   - bash -c "7z x gcc.7z"
-  - set PATH=%cd%\%GCC_ROOT%\bin;%PATH%
+  - set GCC_DIR=%cd%\%GCC_ROOT%
+  # Extra PATH addition to fixup creatprocess error
+  - set PATH=%GCC_DIR%\bin;%GCC_DIR%\lib\gcc\x86_64-w64-mingw32\5.3.0;%PATH%
   - gcc -v
   # Try compiling a test file
   - echo int main(int argc, char **argv) { exit(0); } > test.c
