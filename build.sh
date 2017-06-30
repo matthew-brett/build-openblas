@@ -32,9 +32,11 @@ rm -rf $BUILD_ROOT/$PYTHON_BITS
 LIBNAMESUFFIX=${BUILD_COMMIT}_mingwpy
 if [ "$PYTHON_BITS" == 64 ]; then
     march="x86-64"
+    vc_arch="X64"
 else
     march=pentium4
     extra="-mfpmath=sse -msse2"
+    vc_arch="i386"
 fi
 cflags="-O2 -march=$march -mtune=generic $extra"
 fflags="$cflags -frecursive -ffpe-summary=invalid,zero"
@@ -45,11 +47,18 @@ make BINARY=$PYTHON_BITS DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
      FCOMMON_OPT="$fflags" \
      MAX_STACK_ALLOC=2048
 make PREFIX=$BUILD_ROOT/$PYTHON_BITS install
+DLL_BASENAME=libopenblas_${LIBNAMESUFFIX}
+# At least for the mingwpy wheel, we have to use the VC tools to build the
+# export library.  This path to lib.exe seems to be the default for the VC
+# tools for Python 2.7
+cd exports
+exports_dir=$PWD
+"c:/Program Files (x86)/Common Files/Microsoft\Visual C++ for Python/9.0/VC/bin/lib.exe" /machine:${vc_arch} /def:$DLL_BASENAME.def
 cd $BUILD_ROOT
 # Copy library link file for custom name
 cd $PYTHON_BITS/lib
-DLL_BASENAME=libopenblas_${LIBNAMESUFFIX}
-cp ${DLL_BASENAME}.dll.a ${DLL_BASENAME}.lib
+# This the the file we built above using VC lib.exe
+cp ${exports_dir}/*.lib .
 cd ../..
 # Build template site.cfg for using this build
 cat > ${PYTHON_BITS}/site.cfg.template << EOF
