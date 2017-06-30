@@ -29,7 +29,6 @@ git clean -fxd
 git reset --hard
 BUILD_ROOT=$(cygpath $BUILD_ROOT)
 rm -rf $BUILD_ROOT/$PYTHON_BITS
-LIBNAMESUFFIX=${BUILD_COMMIT}_mingwpy
 if [ "$PYTHON_BITS" == 64 ]; then
     march="x86-64"
     vc_arch="X64"
@@ -40,6 +39,7 @@ else
 fi
 cflags="-O2 -march=$march -mtune=generic $extra"
 fflags="$cflags -frecursive -ffpe-summary=invalid,zero"
+export LIBNAMESUFFIX=${BUILD_COMMIT}_mingwpy
 make BINARY=$PYTHON_BITS DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
      NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1 \
      BUILD_LAPACK_DEPRECATED=1 \
@@ -53,7 +53,7 @@ DLL_BASENAME=libopenblas_${LIBNAMESUFFIX}
 # tools for Python 2.7
 cd exports
 exports_dir=$PWD
-"c:/Program Files (x86)/Common Files/Microsoft\Visual C++ for Python/9.0/VC/bin/lib.exe" /machine:${vc_arch} /def:$DLL_BASENAME.def
+"c:/Program Files (x86)/Common Files/Microsoft\Visual C++ for Python/9.0/VC/bin/lib.exe" /machine:${vc_arch} /def:${DLL_BASENAME}.def
 cd $BUILD_ROOT
 # Copy library link file for custom name
 cd $PYTHON_BITS/lib
