@@ -48,17 +48,14 @@ make BINARY=$PYTHON_BITS DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
      MAX_STACK_ALLOC=2048
 make PREFIX=$BUILD_ROOT/$PYTHON_BITS install
 DLL_BASENAME=libopenblas_${LIBNAMESUFFIX}
-# At least for the mingwpy wheel, we have to use the VC tools to build the
-# export library.  This path to lib.exe seems to be the default for the VC
-# tools for Python 2.7
-cd exports
-exports_dir=$PWD
-"c:/Program Files (x86)/Common Files/Microsoft\Visual C++ for Python/9.0/VC/bin/lib.exe" /machine:${vc_arch} /def:${DLL_BASENAME}.def
 cd $BUILD_ROOT
 # Copy library link file for custom name
 cd $PYTHON_BITS/lib
-# This the the file we built above using VC lib.exe
-cp ${exports_dir}/*.lib .
+# At least for the mingwpy wheel, we have to use the VC tools to build the
+# export library. Maybe fixed in later binutils by patch referred to in
+# https://sourceware.org/ml/binutils/2016-02/msg00002.html
+cp ${our_wd}/OpenBLAS/exports/libopenblas.def ${DLL_BASENAME}.def
+'c:/Program Files (x86)/Common Files/Microsoft\Visual C++ for Python/9.0/VC/bin/lib.exe' /machine:${vc_arch} /def:${DLL_BASENAME}.def
 cd ../..
 # Build template site.cfg for using this build
 cat > ${PYTHON_BITS}/site.cfg.template << EOF
