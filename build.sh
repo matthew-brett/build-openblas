@@ -48,11 +48,11 @@ make PREFIX=$BUILD_ROOT/$PYTHON_BITS install
 cd $BUILD_ROOT
 # Copy library link file for custom name
 cd $PYTHON_BITS/lib
-set DLL_BASENAME=libopenblas_$LIBNAMESUFFIX
-cp $DLL_BASENAME.dll.a $DLL_BASENAME.lib
+DLL_BASENAME=libopenblas_${LIBNAMESUFFIX}
+cp ${DLL_BASENAME}.dll.a ${DLL_BASENAME}.lib
 cd ../..
 # Build template site.cfg for using this build
-cat > $PYTHON_BITS/site.cfg.template << EOF
+cat > ${PYTHON_BITS}/site.cfg.template << EOF
 [openblas]
 libraries = $DLL_BASENAME
 library_dirs = {openblas_root}\\${PYTHON_BITS}\\lib
