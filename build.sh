@@ -3,6 +3,11 @@
 # Expects environment variables:
 #  BUILD_ROOT
 #  BUILD_COMMIT
+#  VC9_ROOT
+
+# Paths in Unix format
+BUILD_ROOT=$(cygpath "$BUILD_ROOT")
+VC9_ROOT=$(cygpath "$VC9_ROOT")
 
 # Minimum utilities
 pacman -Sy --noconfirm git
@@ -27,7 +32,6 @@ cd OpenBLAS
 git checkout $BUILD_COMMIT
 git clean -fxd
 git reset --hard
-BUILD_ROOT=$(cygpath $BUILD_ROOT)
 rm -rf $BUILD_ROOT/$PYTHON_BITS
 if [ "$PYTHON_BITS" == 64 ]; then
     march="x86-64"
@@ -55,7 +59,7 @@ cd $PYTHON_BITS/lib
 # export library. Maybe fixed in later binutils by patch referred to in
 # https://sourceware.org/ml/binutils/2016-02/msg00002.html
 cp ${our_wd}/OpenBLAS/exports/libopenblas.def ${DLL_BASENAME}.def
-'c:/Program Files (x86)/Common Files/Microsoft\Visual C++ for Python/9.0/VC/bin/lib.exe' /machine:${vc_arch} /def:${DLL_BASENAME}.def
+"$VC9_PATH/bin/lib.exe" /machine:${vc_arch} /def:${DLL_BASENAME}.def
 cd ../..
 # Build template site.cfg for using this build
 cat > ${PYTHON_BITS}/site.cfg.template << EOF
