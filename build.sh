@@ -8,9 +8,8 @@
 # Paths in Unix format
 BUILD_ROOT=$(cygpath "$BUILD_ROOT")
 VC9_ROOT=$(cygpath "$VC9_ROOT")
-
 # Minimum utilities
-pacman -Sy --noconfirm git
+pacman -Sy --noconfirm git zip
 pacman -Rs --noconfirm gcc gcc-fortran
 # Our directory for later copying
 our_wd=$PWD
@@ -21,7 +20,7 @@ mkdir builds
 git submodule update --init --recursive
 # Get bitness of Python
 PYTHON_BITS=$(python -c "import platform; print(platform.architecture()[0][:2])")
-# Install mingwpy gcc
+# Install mingwpy gcc, gcc-fortran
 pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
 # Patch specs file
 patch_file="${PWD}/specs.patch"
