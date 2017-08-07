@@ -4,7 +4,7 @@
 environment:
   global:
     MSYS2_ROOT: c:\msys64
-    BUILD_COMMIT: v0.2.20
+    BUILD_COMMIT: 5f998ef
     BUILD_ROOT: c:\opt
     WHEELHOUSE_UPLOADER_USERNAME: travis-worker
     WHEELHOUSE_UPLOADER_SECRET:
