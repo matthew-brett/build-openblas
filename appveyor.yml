@@ -4,55 +4,19 @@ os: Visual Studio 2015
 
 environment:
     global:
-      SCIPY_COMMIT: master
-      OPENBLAS_COMMIT: v0.2.19
+      OPENBLAS_COMMIT: 5f998ef
       OPENBLAS_ROOT: c:\opt
-      OPENBLAS_WHEEL_URL: https://6faba06bebdc7f28a358-9ba0e05766e4bd68e53ad28ecdbfcaa7.ssl.cf2.rackcdn.com
-      PYMW_32: C:\Python27
-      PYMW_64: C:\Python27-x64
       MSYS2_ROOT: c:\msys64
-      WHEELHOUSE_UPLOADER_USERNAME: travis-worker
-      # This the key for matthew-brett
-      WHEELHOUSE_UPLOADER_SECRET:
-        secure: 9s0gdDGnNnTt7hvyNpn0/ZzOMGPdwPp2SewFTfGzYk7uI+rdAN9rFq2D1gAP4NQh
-
-    matrix:
-
-    # - PYTHON: C:\Python27
-    # - PYTHON: C:\Python27-x64
-    # - PYTHON: C:\Python34
-    # - PYTHON: C:\Python34-x64
-    # - PYTHON: C:\Python35
-    # - PYTHON: C:\Python35-x64
-    # - PYTHON: C:\Python36
-      - PYTHON: C:\Python36-x64
-    # - PYTHON: C:\Python36
-
-install:
-  # Fix MSVC builds for 64-bit Python; see:
-  # http://stackoverflow.com/questions/32091593/cannot-install-windows-sdk-7-1-on-windows-10
-  - echo "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64 > "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\amd64/vcvars64.bat"
-  - call install_script.bat
-  # Pin wheel to 0.26 to avoid Windows ABI tag for built wheel
-  - pip install wheel==0.26
+      PYTHON_ARCH: 32
 
 build_script:
   # Build and install the wheel
-  - call build_script.bat
+  - cmd /c unpack_openblas.bat
+  - PATH=%MSYS_ROOT%;%PATH%
+  - mingw32.exe build_gfortran.sh
 
 test_script:
-  - call pre_test.bat
-  # Run the project tests
-  - python -c "import scipy; scipy.test(verbose=3)"
-  - cd ..
+  - a.exe
 
 artifacts:
-  - path: scipy\dist\*.*
-
-on_success:
-  # Upload the generated wheel package to Rackspace
-  # On Windows, Apache Libcloud cannot find a standard CA cert bundle so we
-  # disable the ssl checks.
-  - pip install wheelhouse-uploader
-  - python -m wheelhouse_uploader upload --no-ssl-check --local-folder=dist
-    mingwpy-wheels
+  - path: a.exe
