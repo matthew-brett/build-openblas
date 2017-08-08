@@ -1,5 +1,7 @@
 # Build 32-bit gfortran binary against OpenBLAS
-pacman -Sy mingw-w64-i686-toolchain
+cd $(dirname "${BASH_SOURCE[0]}")
 OBP=$(cygpath $OPENBLAS_ROOT\\$PYTHON_ARCH)
-gfortran -I $OPB/include -o test.exe test.f90 \
-    $OPB/lib/libopenblas_$OPENBLAS_COMMIT_mingwpy.a
+OBP=$(cygpath $OPENBLAS_ROOT\\$PYTHON_ARCH)
+gfortran -I $OBP/include -o test.exe test.f90 \
+    $OBP/lib/libopenblas_${OPENBLAS_COMMIT}_mingwpy.a
+./test

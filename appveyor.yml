@@ -10,13 +10,17 @@ environment:
       PYTHON_ARCH: 32
 
 build_script:
-  # Build and install the wheel
+  # Build and install the test file
   - cmd /c unpack_openblas.bat
-  - PATH=%MSYS_ROOT%;%PATH%
-  - mingw32.exe build_gfortran.sh
+  - PATH=%MSYS2_ROOT%\usr\bin;%PATH%
+  - pacman -Sy --noconfirm mingw-w64-i686-toolchain
+  - set MSYSTEM=MINGW32
+  - set MSYSCON=
+  - set MYDIR=%__CD__%
+  - bash --login %MYDIR%build_gfortran.sh
 
 test_script:
-  - a.exe
+  - bash --login -c "$(cygpath $MYDIR)test.exe"
 
 artifacts:
-  - path: a.exe
+  - path: test.exe
