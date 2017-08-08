@@ -12,8 +12,8 @@ environment:
 
 build_script:
   # Build and install the test file
-  - cmd /c unpack_openblas.bat
   - PATH=%MSYS2_ROOT%\usr\bin;%PATH%
+  - git submodule update --init --recursive
   - pacman -Sy --noconfirm mingw-w64-i686-toolchain
   - set MSYSTEM=MINGW32
   - set MSYSCON=
