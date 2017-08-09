@@ -14,7 +14,7 @@ build_script:
   # Build and install the test file
   - PATH=%MSYS2_ROOT%\usr\bin;%PATH%
   - git submodule update --init --recursive
-  - pacman -Sy --noconfirm mingw-w64-i686-toolchain
+  - pacman -Sy --noconfirm mingw-w64-i686-toolchain zip
   - set MSYSTEM=MINGW32
   - set MSYSCON=
   - set MYDIR=%__CD__%
@@ -25,4 +25,4 @@ test_script:
   - bash --login -c "$(cygpath $MYDIR)test.exe"
 
 artifacts:
-  - path: test.exe
+  - path: test.exe openblas*.zip
