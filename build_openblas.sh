@@ -11,7 +11,8 @@ BUILD_ROOT=$(cygpath "$BUILD_ROOT")
 VC9_ROOT=$(cygpath "$VC9_ROOT")
 
 # Our directory for later copying
-our_wd=$PWD
+our_wd=$(dirname "${BASH_SOURCE[0]}")
+cd $our_wd
 
 cd OpenBLAS
 git fetch origin
