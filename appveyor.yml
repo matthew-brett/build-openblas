@@ -3,26 +3,29 @@
 os: Visual Studio 2015
 
 environment:
-    global:
-      OPENBLAS_COMMIT: 5f998ef
-      OPENBLAS_ROOT: c:\opt
-      MSYS2_ROOT: c:\msys64
-      PYTHON_ARCH: 32
-      OPENBLAS_SUFFIX: vanilla
+  global:
+    OPENBLAS_COMMIT: 5f998ef
+    OPENBLAS_ROOT: c:\opt
+    MSYS2_ROOT: c:\msys64
+    OPENBLAS_SUFFIX: vanilla
+
+  matrix:
+    - BUILD_BITS: 32
 
 build_script:
   # Build and install the test file
+  - set VC9_ROOT=C:\Users\appveyor\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0\VC
   - PATH=%MSYS2_ROOT%\usr\bin;%PATH%
   - git submodule update --init --recursive
   - pacman -Sy --noconfirm mingw-w64-i686-toolchain zip
   - set MSYSTEM=MINGW32
   - set MSYSCON=
-  - set MYDIR=%__CD__%
-  - bash --login %MYDIR%build_openblas.sh
-  - bash --login %MYDIR%build_gfortran.sh
+  - set START_DIR=%__CD__%
+  - bash --login %START_DIR%build_openblas.sh
+  - bash --login %START_DIR%build_gfortran.sh
 
 test_script:
-  - bash --login -c "$(cygpath $MYDIR)test.exe"
+  - bash --login -c "$(cygpath $START_DIR)test.exe"
 
 artifacts:
   - path: test.exe openblas*.zip

@@ -3,30 +3,57 @@
 # Expects environment variables:
 #  OPENBLAS_ROOT
 #  OPENBLAS_COMMIT
-cd $(dirname "${BASH_SOURCE[0]}")
+#  BUILD_BITS
+#  VC9_ROOT
 
 # Paths in Unix format
-BUILD_ROOT=$(cygpath "$OPENBLAS_ROOT")
+BUILD_ROOT=$(cygpath "$BUILD_ROOT")
+VC9_ROOT=$(cygpath "$VC9_ROOT")
+
+# Our directory for later copying
+our_wd=$PWD
+
 cd OpenBLAS
 git fetch origin
 git checkout $OPENBLAS_COMMIT
 git clean -fxd
 git reset --hard
-rm -rf $BUILD_ROOT/32
-march=pentium4
-extra="-mfpmath=sse -msse2"
-vc_arch="i386"
+rm -rf $OPENBLAS_ROOT/$BUILD_BITS
+if [ "$PYTHON_BITS" == 64 ]; then
+    march="x86-64"
+    vc_arch="X64"
+else
+    march=pentium4
+    extra="-mfpmath=sse -msse2"
+    vc_arch="i386"
+fi
 cflags="-O2 -march=$march -mtune=generic $extra"
 fflags="$cflags -frecursive -ffpe-summary=invalid,zero"
-export LIBNAMESUFFIX=${OPENBLAS_COMMIT}_vanilla
-make BINARY=32 DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
+export LIBNAMESUFFIX=${OPENBLAS_COMMIT}_mingwpy
+make BINARY=$BUILD_BITS DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
      NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1 \
      BUILD_LAPACK_DEPRECATED=1 \
      COMMON_OPT="$cflags" \
      FCOMMON_OPT="$fflags" \
      MAX_STACK_ALLOC=2048
-make PREFIX=$BUILD_ROOT/32 install
-cd $BUILD_ROOT
-ZIP_NAME="openblas-${BUILD_COMMIT}_win32.zip"
-zip -r $ZIP_NAME $PYTHON_BITS
+make PREFIX=$OPENBLAS_ROOT/$BUILD_BITS install
+DLL_BASENAME=libopenblas_${LIBNAMESUFFIX}
+cd $OPENBLAS_ROOT
+# Copy library link file for custom name
+cd $BUILD_BITS/lib
+# At least for the mingwpy wheel, we have to use the VC tools to build the
+# export library. Maybe fixed in later binutils by patch referred to in
+# https://sourceware.org/ml/binutils/2016-02/msg00002.html
+cp ${our_wd}/OpenBLAS/exports/libopenblas.def ${DLL_BASENAME}.def
+"$VC9_ROOT/bin/lib.exe" /machine:${vc_arch} /def:${DLL_BASENAME}.def
+cd ../..
+# Build template site.cfg for using this build
+cat > ${BUILD_BITS}/site.cfg.template << EOF
+[openblas]
+libraries = $DLL_BASENAME
+library_dirs = {openblas_root}\\${BUILD_BITS}\\lib
+include_dirs = {openblas_root}\\${BUILD_BITS}\\include
+EOF
+ZIP_NAME="openblas-${OPENBLAS_COMMIT}_win${BUILD_BITS}.zip"
+zip -r $ZIP_NAME $BUILD_BITS
 cp $ZIP_NAME $our_wd
