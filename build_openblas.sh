@@ -7,7 +7,7 @@
 #  VC9_ROOT
 
 # Paths in Unix format
-BUILD_ROOT=$(cygpath "$BUILD_ROOT")
+OPENBLAS_ROOT=$(cygpath "$OPENBLAS_ROOT")
 VC9_ROOT=$(cygpath "$VC9_ROOT")
 
 # Our directory for later copying
