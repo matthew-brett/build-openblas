@@ -30,7 +30,8 @@ else
 fi
 cflags="-O2 -march=$march -mtune=generic $extra"
 fflags="$cflags -frecursive -ffpe-summary=invalid,zero"
-export LIBNAMESUFFIX=${OPENBLAS_COMMIT}_${OPENBLAS_SUFFIX}
+GCC_VER=$(gcc -dumpversion | tr . _)
+export LIBNAMESUFFIX=${OPENBLAS_COMMIT}_gcc${GCC_VER}
 make BINARY=$BUILD_BITS DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
      NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1 \
      BUILD_LAPACK_DEPRECATED=1 \
@@ -55,6 +56,6 @@ libraries = $DLL_BASENAME
 library_dirs = {openblas_root}\\${BUILD_BITS}\\lib
 include_dirs = {openblas_root}\\${BUILD_BITS}\\include
 EOF
-ZIP_NAME="openblas-${OPENBLAS_COMMIT}_win${BUILD_BITS}.zip"
+ZIP_NAME="openblas-${OPENBLAS_COMMIT}_gcc${GCC_VER}_win${BUILD_BITS}.zip"
 zip -r $ZIP_NAME $BUILD_BITS
 cp $ZIP_NAME $our_wd

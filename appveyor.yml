@@ -7,19 +7,25 @@ environment:
     OPENBLAS_COMMIT: 5f998ef
     OPENBLAS_ROOT: c:\opt
     MSYS2_ROOT: c:\msys64
-    OPENBLAS_SUFFIX: vanilla
+    WHEELHOUSE_UPLOADER_USERNAME: travis-worker
+    WHEELHOUSE_UPLOADER_SECRET:
+      secure: 9s0gdDGnNnTt7hvyNpn0/ZzOMGPdwPp2SewFTfGzYk7uI+rdAN9rFq2D1gAP4NQh
 
   matrix:
     - BUILD_BITS: 32
+      MSYSTEM: MINGW32
+      TOOL_ARCH: i686
+    - BUILD_BITS: 64
+      MSYSTEM: MINGW64
+      TOOL_ARCH: x86_64
 
 build_script:
   # Build and install the test file
   - set VC9_ROOT=C:\Users\appveyor\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0\VC
   - PATH=%MSYS2_ROOT%\usr\bin;%PATH%
   - git submodule update --init --recursive
-  - pacman -Sy --noconfirm mingw-w64-i686-toolchain zip
-  - set MSYSTEM=MINGW32
-  - set MSYSCON=
+  - pacman -Sy zip
+  - pacman -Sy --noconfirm mingw-w64-%TOOL_ARCH%-toolchain zip
   - set START_DIR=%__CD__%
   - bash --login %START_DIR%build_openblas.sh
   - bash --login %START_DIR%build_gfortran.sh
@@ -29,3 +35,14 @@ test_script:
 
 artifacts:
   - path: test.exe openblas*.zip
+
+on_success:
+  # Upload the generated package to Rackspace
+  # On Windows, Apache Libcloud cannot find a standard CA cert bundle so we
+  # disable the ssl checks.
+  - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - pip install wheelhouse-uploader
+  - python -m wheelhouse_uploader upload
+    --no-ssl-check --local-folder=builds
+    --no-update-index
+    wheels
