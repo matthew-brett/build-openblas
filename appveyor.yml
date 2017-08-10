@@ -10,31 +10,31 @@ environment:
     WHEELHOUSE_UPLOADER_USERNAME: travis-worker
     WHEELHOUSE_UPLOADER_SECRET:
       secure: 9s0gdDGnNnTt7hvyNpn0/ZzOMGPdwPp2SewFTfGzYk7uI+rdAN9rFq2D1gAP4NQh
+    PYTHON: "C:\\Python27"
 
   matrix:
     - BUILD_BITS: 32
-      MSYSTEM: MINGW32
-      TOOL_ARCH: i686
     - BUILD_BITS: 64
-      MSYSTEM: MINGW64
-      TOOL_ARCH: x86_64
 
 build_script:
-  # Build and install the test file
+  # Build OpenBLAS, build and install the test file
   - set VC9_ROOT=C:\Users\appveyor\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0\VC
   - PATH=%MSYS2_ROOT%\usr\bin;%PATH%
   - git submodule update --init --recursive
-  - pacman -Sy zip
-  - pacman -Sy --noconfirm mingw-w64-%TOOL_ARCH%-toolchain zip
+  - if "%BUILD_BITS%"=="32" (set PLAT=i686) else (set PLAT=x86_64)
+  - pacman -Sy --noconfirm zip mingw-w64-%PLAT%-toolchain
+  - set MSYSTEM=MINGW%BUILD_BITS%
   - set START_DIR=%__CD__%
+  # Need --login to process MSYSTEM variable
   - bash --login %START_DIR%build_openblas.sh
   - bash --login %START_DIR%build_gfortran.sh
 
 test_script:
   - bash --login -c "$(cygpath $START_DIR)test.exe"
+  - copy test.exe builds
 
 artifacts:
-  - path: test.exe openblas*.zip
+  - path: builds\*.*
 
 on_success:
   # Upload the generated package to Rackspace

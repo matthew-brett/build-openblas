@@ -13,6 +13,9 @@ VC9_ROOT=$(cygpath "$VC9_ROOT")
 # Our directory for later copying
 our_wd=$(dirname "${BASH_SOURCE[0]}")
 cd $our_wd
+# Make output directory for build artifacts
+rm -rf builds
+mkdir builds
 
 cd OpenBLAS
 git fetch origin
@@ -58,4 +61,4 @@ include_dirs = {openblas_root}\\${BUILD_BITS}\\include
 EOF
 ZIP_NAME="openblas-${OPENBLAS_COMMIT}_gcc${GCC_VER}_win${BUILD_BITS}.zip"
 zip -r $ZIP_NAME $BUILD_BITS
-cp $ZIP_NAME $our_wd
+cp $ZIP_NAME $our_wd/builds
