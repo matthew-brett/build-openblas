@@ -23,7 +23,7 @@ git checkout $OPENBLAS_COMMIT
 git clean -fxd
 git reset --hard
 rm -rf $OPENBLAS_ROOT/$BUILD_BITS
-if [ "$PYTHON_BITS" == 64 ]; then
+if [ "$BUILD_BITS" == 64 ]; then
     march="x86-64"
     vc_arch="X64"
 else
