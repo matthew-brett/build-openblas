@@ -67,6 +67,6 @@ libraries = $DLL_BASENAME
 library_dirs = {openblas_root}\\${PYTHON_BITS}\\lib
 include_dirs = {openblas_root}\\${PYTHON_BITS}\\include
 EOF
-ZIP_NAME="openblas-${BUILD_COMMIT}_win${PYTHON_BITS}.zip"
+ZIP_NAME="openblas-${LIBNAMESUFFIX}_win${PYTHON_BITS}.zip"
 zip -r $ZIP_NAME $PYTHON_BITS
 cp $ZIP_NAME $our_wd/builds
