@@ -12,17 +12,25 @@ environment:
       secure: 9s0gdDGnNnTt7hvyNpn0/ZzOMGPdwPp2SewFTfGzYk7uI+rdAN9rFq2D1gAP4NQh
     PYTHON: "C:\\Python27"
 
+  # Need for mingw-builds discussed at
+  # https://github.com/xianyi/OpenBLAS/issues/1503
   matrix:
     - BUILD_BITS: 32
+      MINGW_URL: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z/download
     - BUILD_BITS: 64
+      MINGW_URL: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/7.3.0/threads-posix/seh/x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z/download
 
 build_script:
   # Build OpenBLAS, build and install the test file
   - set VC9_ROOT=C:\Users\appveyor\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0\VC
   - PATH=%MSYS2_ROOT%\usr\bin;%PATH%
+  # Get mingw-builds compiler chain, put on path
+  - curl -L %MINGW_URL% -o mingw_distro.7z
+  - 7z x mingw_distro.7z
+  - PATH=%__CD__%\mingw%BUILD_BITS%\bin;%PATH%
   - git submodule update --init --recursive
   - if "%BUILD_BITS%"=="32" (set PLAT=i686) else (set PLAT=x86_64)
-  - pacman -Sy --noconfirm zip mingw-w64-%PLAT%-toolchain
+  - pacman -Sy --noconfirm zip
   - set MSYSTEM=MINGW%BUILD_BITS%
   - set START_DIR=%__CD__%
   # Need --login to process MSYSTEM variable
