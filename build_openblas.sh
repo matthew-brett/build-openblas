@@ -18,11 +18,19 @@ rm -rf builds
 mkdir builds
 
 cd OpenBLAS
+
+# Check which gcc we're using
+which gcc
+gcc --version
+
+# Get / clean code
 git fetch origin
 git checkout $OPENBLAS_COMMIT
 git clean -fxd
 git reset --hard
 rm -rf $OPENBLAS_ROOT/$BUILD_BITS
+
+# Set architecture flags
 if [ "$BUILD_BITS" == 64 ]; then
     march="x86-64"
     vc_arch="X64"
@@ -33,8 +41,12 @@ else
 fi
 cflags="-O2 -march=$march -mtune=generic $extra"
 fflags="$cflags -frecursive -ffpe-summary=invalid,zero"
+
+# Build name for output library from gcc version and OpenBLAS commit.
 GCC_VER=$(gcc -dumpversion | tr . _)
 export LIBNAMESUFFIX=${OPENBLAS_COMMIT}_gcc${GCC_VER}
+
+# Build OpenBLAS
 make BINARY=$BUILD_BITS DYNAMIC_ARCH=1 USE_THREAD=1 USE_OPENMP=0 \
      NUM_THREADS=24 NO_WARMUP=1 NO_AFFINITY=1 CONSISTENT_FPCSR=1 \
      BUILD_LAPACK_DEPRECATED=1 \
