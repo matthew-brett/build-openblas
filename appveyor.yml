@@ -4,7 +4,7 @@ os: Visual Studio 2015
 
 environment:
   global:
-    OPENBLAS_COMMIT: 4fcdd244
+    OPENBLAS_COMMIT: 7480a655
     OPENBLAS_ROOT: c:\opt
     MSYS2_ROOT: c:\msys64
     WHEELHOUSE_UPLOADER_USERNAME: travis-worker
@@ -38,6 +38,9 @@ build_script:
   # zip needed for packing archive
   - pacman -Sy --noconfirm zip
   - git submodule update --init --recursive
+  # Add my remote to get testing commit
+  - git remote add matthew-brett https://github.com/matthew-brett/OpenBLAS.git
+  - git fetch matthew-brett
   - set MSYSTEM=MINGW%BUILD_BITS%
   - set START_DIR=%__CD__%
   # Need --login to process MSYSTEM variable
