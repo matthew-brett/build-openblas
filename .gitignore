@@ -1,6 +1,0 @@
-venv/
-builds/
-*~
-*.pyc
-*.swp
-test.exe
